@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caprichos Chaletianos P&J</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; }
+    .hidden { display: none !important; }
+    .page { display: none; }
+    .page.active { display: block; }
+    nav { background: white; border-bottom: 1px solid #e5e5e5; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+    .logo span { color: #D85A30; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-btn { background: transparent; border: 1px solid #ddd; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; color: #1a1a1a; }
+    .nav-btn:hover { background: #f5f5f5; }
+    .nav-btn.active { background: #D85A30; color: white; border-color: #D85A30; }
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+    .hero { text-align: center; padding: 3rem 1rem 2rem; }
+    .hero h1 { font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+    .hero p { color: #666; font-size: 15px; }
+    .badge { display: inline-block; background: #FAECE7; color: #993C1D; font-size: 11px; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; font-weight: 500; }
+    .section-title { font-size: 18px; font-weight: 600; margin-bottom: 1rem; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .product-card { background: white; border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem; }
+    .product-img { width: 100%; height: 140px; border-radius: 8px; background: #f5f5f0; display: flex; align-items: center; justify-content: center; font-size: 48px; margin-bottom: 12px; overflow: hidden; }
+    .product-img img { width: 100%; height: 100%; object-fit: cover; }
+    .product-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .product-price { font-size: 16px; font-weight: 600; color: #D85A30; margin-bottom: 8px; }
+    .product-desc { font-size: 12px; color: #666; margin-bottom: 12px; }
+    .btn-primary { background: #D85A30; color: white; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 500; cursor: pointer; width: 100%; }
+    .btn-primary:hover { background: #993C1D; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: transparent; border: 1px solid #ddd; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; color: #1a1a1a; }
+    .btn-secondary:hover { background: #f5f5f5; }
+    .search-box { background: white; border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    input, textarea, select { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: inherit; background: white; color: #1a1a1a; margin-bottom: 10px; outline: none; }
+    input:focus, textarea:focus, select:focus { border-color: #D85A30; }
+    textarea { resize: vertical; min-height: 80px; }
+    label { font-size: 13px; color: #555; display: block; margin-bottom: 4px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .modal { background: white; border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; position: relative; }
+    .modal h2 { font-size: 16px; font-weight: 600; margin-bottom: 1rem; padding-right: 2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 20px; cursor: pointer; color: #999; line-height: 1; }
+    .modal-close:hover { color: #333; }
+    .status-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+    .status-pendiente { background: #FAEEDA; color: #854F0B; }
+    .status-buscando { background: #E6F1FB; color: #185FA5; }
+    .status-listo { background: #EAF3DE; color: #3B6D11; }
+    .status-entregado { background: #f1f1f1; color: #555; }
+    .admin-panel { background: white; border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab-btn { background: transparent; border: 1px solid #ddd; border-radius: 8px; padding: 7px 14px; font-size: 13px; cursor: pointer; color: #1a1a1a; font-weight: 500; }
+    .tab-btn:hover { background: #f5f5f5; }
+    .tab-btn.active { background: #D85A30; color: white; border-color: #D85A30; }
+    .pedido-item { border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+    .pedido-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .pedido-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .pedido-info { font-size: 12px; color: #666; margin-top: 2px; }
+    .success-msg { background: #EAF3DE; color: #3B6D11; border-radius: 8px; padding: 12px 16px; font-size: 14px; margin-top: 1rem; }
+    .error-msg { background: #FCEBEB; color: #A32D2D; border-radius: 8px; padding: 12px 16px; font-size: 14px; margin-top: 1rem; }
+    .login-card { max-width: 360px; margin: 4rem auto; background: white; border: 1px solid #e5e5e5; border-radius: 12px; padding: 2rem; }
+    .login-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 1.5rem; }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 300; display: flex; align-items: center; justify-content: center; }
+    .loading-box { background: white; border-radius: 12px; padding: 1.5rem 2rem; font-size: 14px; display: flex; align-items: center; gap: 12px; }
+    .loading-spinner { width: 20px; height: 20px; border: 2px solid #f0f0f0; border-top-color: #D85A30; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    .type-select { display: flex; gap: 8px; margin-bottom: 12px; }
+    .type-btn { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 8px; background: transparent; cursor: pointer; font-size: 13px; color: #1a1a1a; font-weight: 500; }
+    .type-btn:hover { background: #f5f5f5; }
+    .type-btn.active { border-color: #D85A30; color: #D85A30; background: #FAECE7; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { background: #f5f5f0; border-radius: 8px; padding: 1rem; text-align: center; }
+    .stat-num { font-size: 28px; font-weight: 700; color: #D85A30; }
+    .stat-label { font-size: 12px; color: #666; margin-top: 4px; }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: #999; font-size: 14px; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .stock-badge-disponible { background: #EAF3DE; color: #3B6D11; }
+    .stock-badge-pocas { background: #FAEEDA; color: #854F0B; }
+    .stock-badge-agotado { background: #FCEBEB; color: #A32D2D; }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .nav-links { gap: 4px; }
+      .nav-btn { padding: 5px 10px; font-size: 12px; }
+      .logo { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading-overlay" class="loading-overlay hidden">
+  <div class="loading-box"><div class="loading-spinner"></div> Procesando...</div>
+</div>
+
+<nav>
+  <div class="logo">Caprichos <span>Chaletianos</span> P&amp;J</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('tienda')">Tienda</button>
+    <button class="nav-btn" onclick="showPage('buscar')">Buscar</button>
+    <button class="nav-btn" id="admin-nav-btn" onclick="goAdmin()">Admin</button>
+  </div>
+</nav>
+
+<!-- TIENDA -->
+<div id="page-tienda" class="page active">
+  <div class="container">
+    <div class="hero">
+      <div class="badge">Chalet Galapagar</div>
+      <h1>La tienda del Chalet 🛍️</h1>
+      <p>Productos seleccionados para vosotros. Pago en efectivo cuando pasemos a entregar.</p>
+    </div>
+    <div class="section-title">Productos disponibles</div>
+    <div id="products-grid" class="products-grid">
+      <div class="empty-state">Cargando productos...</div>
+    </div>
+  </div>
+</div>
+
+<!-- BUSCAR PRODUCTO -->
+<div id="page-buscar" class="page">
+  <div class="container">
+    <div class="hero">
+      <div class="badge">Búsqueda personalizada</div>
+      <h1>¿No encuentras lo que buscas? 🔍</h1>
+      <p>Dinos qué quieres y nosotros lo buscamos por ti. Pago en efectivo a la entrega.</p>
+    </div>
+    <div class="search-box">
+      <div class="type-select">
+        <button class="type-btn active" id="type-chalet" onclick="setUserType('chalet')">Soy del Chalet</button>
+        <button class="type-btn" id="type-externo" onclick="setUserType('externo')">Soy externo</button>
+      </div>
+      <div id="form-chalet-fields">
+        <div class="form-row">
+          <div><label>Nombre</label><input type="text" id="b-nombre" placeholder="Tu nombre"></div>
+          <div><label>Apellidos</label><input type="text" id="b-apellidos" placeholder="Tus apellidos"></div>
+        </div>
+      </div>
+      <div id="form-externo-fields" class="hidden">
+        <div class="form-row">
+          <div><label>Nombre</label><input type="text" id="b-nombre-ext" placeholder="Tu nombre"></div>
+          <div><label>Apellidos</label><input type="text" id="b-apellidos-ext" placeholder="Tus apellidos"></div>
+        </div>
+        <label>Correo electrónico</label>
+        <input type="email" id="b-email-ext" placeholder="tu@email.com">
+        <label>Dirección de entrega</label>
+        <input type="text" id="b-direccion-ext" placeholder="Calle, número, ciudad...">
+      </div>
+      <label>¿Qué producto buscas?</label>
+      <textarea id="b-descripcion" placeholder="Describe el producto: qué es, para qué lo usas, si tienes alguna referencia..."></textarea>
+      <label>Presupuesto máximo (opcional)</label>
+      <input type="text" id="b-presupuesto" placeholder="Ej: 20€">
+      <button class="btn-primary" onclick="enviarBusqueda()">Enviar solicitud</button>
+      <div id="busqueda-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="page-admin-login" class="page">
+  <div class="container">
+    <div class="login-card">
+      <h2>Panel de administración</h2>
+      <label>Usuario</label>
+      <input type="text" id="admin-user" placeholder="joaquin o pere">
+      <label>Contraseña</label>
+      <input type="password" id="admin-pass" placeholder="Contraseña">
+      <button class="btn-primary" style="margin-top:8px;" onclick="adminLogin()">Entrar</button>
+      <div id="login-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="page-admin" class="page">
+  <div class="container">
+    <div class="admin-header">
+      <div>
+        <div style="font-size:20px;font-weight:600;">Panel Admin</div>
+        <div style="font-size:13px;color:#666;" id="admin-welcome"></div>
+      </div>
+      <button class="btn-secondary" onclick="adminLogout()">Cerrar sesión</button>
+    </div>
+    <div class="grid-2" style="margin-bottom:1.5rem;">
+      <div class="stat-card"><div class="stat-num" id="stat-solicitudes">0</div><div class="stat-label">Solicitudes pendientes</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-productos">0</div><div class="stat-label">Productos en tienda</div></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="adminTab('pedidos')">Solicitudes</button>
+      <button class="tab-btn" onclick="adminTab('tienda-admin')">Gestionar tienda</button>
+      <button class="tab-btn" onclick="adminTab('nuevo-producto')">+ Añadir producto</button>
+    </div>
+    <div id="tab-pedidos" class="admin-panel">
+      <div id="pedidos-list"><div class="empty-state">Cargando...</div></div>
+    </div>
+    <div id="tab-tienda-admin" class="admin-panel hidden">
+      <div id="productos-admin-list"><div class="empty-state">Cargando...</div></div>
+    </div>
+    <div id="tab-nuevo-producto" class="admin-panel hidden">
+      <div style="font-size:16px;font-weight:600;margin-bottom:1rem;" id="prod-form-title">Nuevo producto</div>
+      <input type="hidden" id="prod-edit-id">
+      <label>Nombre del producto</label>
+      <input type="text" id="prod-nombre" placeholder="Ej: Auriculares inalámbricos">
+      <label>Descripción</label>
+      <textarea id="prod-desc" placeholder="Describe el producto brevemente..."></textarea>
+      <div class="form-row">
+        <div><label>Precio (€)</label><input type="number" id="prod-precio" placeholder="19.99" step="0.01"></div>
+        <div><label>Emoji</label><input type="text" id="prod-emoji" placeholder="🎧" maxlength="2"></div>
+      </div>
+      <label>URL de imagen (opcional)</label>
+      <input type="text" id="prod-imagen" placeholder="https://...">
+      <label>Stock disponible</label>
+      <select id="prod-stock">
+        <option value="disponible">Disponible</option>
+        <option value="pocas">Pocas unidades</option>
+        <option value="agotado">Agotado</option>
+      </select>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn-primary" style="flex:1;" onclick="guardarProducto()">Guardar producto</button>
+        <button class="btn-secondary" onclick="cancelarEditProduct()">Cancelar</button>
+      </div>
+      <div id="prod-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SOLICITAR PRODUCTO DE TIENDA -->
+<div id="modal-solicitar" class="modal-overlay hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-solicitar')">&times;</button>
+    <h2 id="modal-product-name">Solicitar producto</h2>
+    <p style="font-size:13px;color:#666;margin-bottom:1rem;">Confirma tu pedido. Te avisaremos cuando esté listo para recoger y te diremos el precio final.</p>
+    <div class="type-select">
+      <button class="type-btn active" id="mt-chalet" onclick="setModalType('chalet')">Soy del Chalet</button>
+      <button class="type-btn" id="mt-externo" onclick="setModalType('externo')">Soy externo</button>
+    </div>
+    <div id="modal-chalet-fields">
+      <div class="form-row">
+        <div><label>Nombre</label><input type="text" id="m-nombre" placeholder="Tu nombre"></div>
+        <div><label>Apellidos</label><input type="text" id="m-apellidos" placeholder="Tus apellidos"></div>
+      </div>
+    </div>
+    <div id="modal-externo-fields" class="hidden">
+      <div class="form-row">
+        <div><label>Nombre</label><input type="text" id="m-nombre-ext" placeholder="Tu nombre"></div>
+        <div><label>Apellidos</label><input type="text" id="m-apellidos-ext" placeholder="Tus apellidos"></div>
+      </div>
+      <label>Email</label>
+      <input type="email" id="m-email-ext" placeholder="tu@email.com">
+      <label>Dirección</label>
+      <input type="text" id="m-dir-ext" placeholder="Dirección de entrega">
+    </div>
+    <label>Cantidad</label>
+    <input type="number" id="m-cantidad" value="1" min="1" max="99">
+    <input type="hidden" id="m-product-id">
+    <button class="btn-primary" onclick="confirmarPedido()">Confirmar pedido</button>
+    <div id="modal-msg"></div>
+  </div>
+</div>
+
+<!-- MODAL ACTUALIZAR PEDIDO (ADMIN) -->
+<div id="modal-update-pedido" class="modal-overlay hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-update-pedido')">&times;</button>
+    <h2>Actualizar pedido</h2>
+    <input type="hidden" id="up-id">
+    <div style="margin-bottom:12px;font-size:14px;font-weight:500;" id="up-info"></div>
+    <label>Estado del pedido</label>
+    <select id="up-estado">
+      <option value="pendiente">Pendiente</option>
+      <option value="buscando">Buscando</option>
+      <option value="listo">Listo para recoger</option>
+      <option value="entregado">Entregado</option>
+    </select>
+    <label>Precio final (€) — dejar vacío si aún no está definido</label>
+    <input type="number" id="up-precio" placeholder="Ej: 15.50" step="0.01">
+    <label>Nota para el cliente (opcional)</label>
+    <textarea id="up-nota" placeholder="Ej: Lo tengo para el jueves, avísame cuando puedas pasarte..."></textarea>
+    <button class="btn-primary" onclick="guardarUpdatePedido()">Guardar cambios</button>
+    <div id="up-msg"></div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://btxwrxkwylqoivxgxvte.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0eHdyeGt3eWxxb2l2eGd4dnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjkxOTgsImV4cCI6MjA5MTY0NTE5OH0.ZME2ppoMJ0BKDl2nTwHWob9VQt9rCJtm_VjzCH8sb2Q';
+
+  const ADMINS = {
+    joaquin: { pass: 'joaquin2024', nombre: 'Joaquín' },
+    pere: { pass: 'pere2024', nombre: 'Pere' }
+  };
+
+  let adminSession = null;
+  let userType = 'chalet';
+  let modalUserType = 'chalet';
+  let editingProductId = null;
+
+  const sb = async (endpoint, method = 'GET', body = null, extra = '') => {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}${extra}`, {
+      method,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': (method === 'POST' || method === 'PATCH') ? 'return=representation' : ''
+      },
+      body: body ? JSON.stringify(body) : null
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  };
+
+  function showLoading(v) {
+    document.getElementById('loading-overlay').classList.toggle('hidden', !v);
+  }
+
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${name}`).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const map = { tienda: 0, buscar: 1 };
+    if (map[name] !== undefined) document.querySelectorAll('.nav-btn')[map[name]].classList.add('active');
+    if (name === 'tienda') loadProductos();
+    if (name === 'admin') { loadPedidos(); loadProductosAdmin(); loadStats(); }
+  }
+
+  function goAdmin() {
+    if (adminSession) showPage('admin');
+    else showPage('admin-login');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+
+  function setUserType(t) {
+    userType = t;
+    document.getElementById('type-chalet').classList.toggle('active', t === 'chalet');
+    document.getElementById('type-externo').classList.toggle('active', t === 'externo');
+    document.getElementById('form-chalet-fields').classList.toggle('hidden', t !== 'chalet');
+    document.getElementById('form-externo-fields').classList.toggle('hidden', t !== 'externo');
+  }
+
+  function setModalType(t) {
+    modalUserType = t;
+    document.getElementById('mt-chalet').classList.toggle('active', t === 'chalet');
+    document.getElementById('mt-externo').classList.toggle('active', t === 'externo');
+    document.getElementById('modal-chalet-fields').classList.toggle('hidden', t !== 'chalet');
+    document.getElementById('modal-externo-fields').classList.toggle('hidden', t !== 'externo');
+  }
+
+  async function loadProductos() {
+    const grid = document.getElementById('products-grid');
+    try {
+      const prods = await sb('productos', 'GET', null, '?order=created_at.desc');
+      if (!prods || prods.length === 0) {
+        grid.innerHTML = '<div class="empty-state">No hay productos aún. ¡Pronto habrá novedades!</div>';
+        return;
+      }
+      grid.innerHTML = prods.map(p => `
+        <div class="product-card">
+          <div class="product-img">${p.imagen_url ? `<img src="${p.imagen_url}" alt="${p.nombre}">` : (p.emoji || '📦')}</div>
+          <div class="product-name">${p.nombre}</div>
+          <div class="product-price">${parseFloat(p.precio).toFixed(2)}€</div>
+          <div class="product-desc">${p.descripcion || ''}</div>
+          ${p.stock !== 'agotado'
+            ? `<button class="btn-primary" onclick="abrirModalSolicitar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}')">Solicitar</button>`
+            : `<button class="btn-primary" disabled>Agotado</button>`
+          }
+        </div>`).join('');
+    } catch(e) {
+      grid.innerHTML = '<div class="empty-state">Error cargando productos. Comprueba la conexión.</div>';
+      console.error(e);
+    }
+  }
+
+  function abrirModalSolicitar(productId, productName) {
+    document.getElementById('m-product-id').value = productId;
+    document.getElementById('modal-product-name').textContent = `Solicitar: ${productName}`;
+    document.getElementById('modal-msg').innerHTML = '';
+    document.getElementById('m-nombre').value = '';
+    document.getElementById('m-apellidos').value = '';
+    document.getElementById('m-cantidad').value = '1';
+    setModalType('chalet');
+    document.getElementById('modal-solicitar').classList.remove('hidden');
+  }
+
+  async function confirmarPedido() {
+    const productId = document.getElementById('m-product-id').value;
+    const cantidad = parseInt(document.getElementById('m-cantidad').value) || 1;
+    let nombre, apellidos, email, direccion;
+    if (modalUserType === 'chalet') {
+      nombre = document.getElementById('m-nombre').value.trim();
+      apellidos = document.getElementById('m-apellidos').value.trim();
+      if (!nombre || !apellidos) { document.getElementById('modal-msg').innerHTML = '<div class="error-msg">Pon tu nombre y apellidos.</div>'; return; }
+      email = `${nombre.toLowerCase()}.${apellidos.toLowerCase().replace(/\s+/g,'.')}@chalet.es`;
+      direccion = 'Chalet Galapagar';
+    } else {
+      nombre = document.getElementById('m-nombre-ext').value.trim();
+      apellidos = document.getElementById('m-apellidos-ext').value.trim();
+      email = document.getElementById('m-email-ext').value.trim();
+      direccion = document.getElementById('m-dir-ext').value.trim();
+      if (!nombre || !apellidos || !email || !direccion) { document.getElementById('modal-msg').innerHTML = '<div class="error-msg">Rellena todos los campos.</div>'; return; }
+    }
+    showLoading(true);
+    try {
+      await sb('pedidos', 'POST', { nombre, apellidos, email, direccion, product_id: productId, cantidad, tipo: 'tienda', estado: 'pendiente', es_chalet: modalUserType === 'chalet' });
+      document.getElementById('modal-msg').innerHTML = '<div class="success-msg">✅ ¡Pedido registrado! Os avisaremos cuando esté listo.</div>';
+      setTimeout(() => closeModal('modal-solicitar'), 2500);
+    } catch(e) {
+      document.getElementById('modal-msg').innerHTML = '<div class="error-msg">Error al registrar. Inténtalo de nuevo.</div>';
+      console.error(e);
+    }
+    showLoading(false);
+  }
+
+  async function enviarBusqueda() {
+    const descripcion = document.getElementById('b-descripcion').value.trim();
+    const presupuesto = document.getElementById('b-presupuesto').value.trim();
+    if (!descripcion) { document.getElementById('busqueda-msg').innerHTML = '<div class="error-msg">Describe el producto que buscas.</div>'; return; }
+    let nombre, apellidos, email, direccion;
+    if (userType === 'chalet') {
+      nombre = document.getElementById('b-nombre').value.trim();
+      apellidos = document.getElementById('b-apellidos').value.trim();
+      if (!nombre || !apellidos) { document.getElementById('busqueda-msg').innerHTML = '<div class="error-msg">Pon tu nombre y apellidos.</div>'; return; }
+      email = `${nombre.toLowerCase()}.${apellidos.toLowerCase().replace(/\s+/g,'.')}@chalet.es`;
+      direccion = 'Chalet Galapagar';
+    } else {
+      nombre = document.getElementById('b-nombre-ext').value.trim();
+      apellidos = document.getElementById('b-apellidos-ext').value.trim();
+      email = document.getElementById('b-email-ext').value.trim();
+      direccion = document.getElementById('b-direccion-ext').value.trim();
+      if (!nombre || !apellidos || !email || !direccion) { document.getElementById('busqueda-msg').innerHTML = '<div class="error-msg">Rellena todos los campos.</div>'; return; }
+    }
+    showLoading(true);
+    try {
+      await sb('pedidos', 'POST', { nombre, apellidos, email, direccion, descripcion_busqueda: descripcion, presupuesto: presupuesto || null, tipo: 'busqueda', estado: 'pendiente', es_chalet: userType === 'chalet' });
+      document.getElementById('busqueda-msg').innerHTML = '<div class="success-msg">✅ ¡Solicitud enviada! Estaremos buscando tu producto pronto.</div>';
+      document.getElementById('b-descripcion').value = '';
+      document.getElementById('b-presupuesto').value = '';
+    } catch(e) {
+      document.getElementById('busqueda-msg').innerHTML = '<div class="error-msg">Error al enviar. Inténtalo de nuevo.</div>';
+      console.error(e);
+    }
+    showLoading(false);
+  }
+
+  function adminLogin() {
+    const user = document.getElementById('admin-user').value.trim().toLowerCase();
+    const pass = document.getElementById('admin-pass').value;
+    if (ADMINS[user] && ADMINS[user].pass === pass) {
+      adminSession = { user, nombre: ADMINS[user].nombre };
+      document.getElementById('admin-welcome').textContent = `Hola, ${adminSession.nombre} 👋`;
+      document.getElementById('login-error').innerHTML = '';
+      document.getElementById('admin-nav-btn').textContent = 'Panel ✓';
+      showPage('admin');
+    } else {
+      document.getElementById('login-error').innerHTML = '<div class="error-msg" style="margin-top:8px;">Usuario o contraseña incorrectos.</div>';
+    }
+  }
+
+  function adminLogout() {
+    adminSession = null;
+    document.getElementById('admin-nav-btn').textContent = 'Admin';
+    showPage('tienda');
+  }
+
+  function adminTab(tab) {
+    ['pedidos','tienda-admin','nuevo-producto'].forEach(t => {
+      document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
+    });
+    document.querySelectorAll('.tab-btn').forEach((b,i) => {
+      b.classList.toggle('active', ['pedidos','tienda-admin','nuevo-producto'][i] === tab);
+    });
+    if (tab === 'tienda-admin') loadProductosAdmin();
+    if (tab === 'pedidos') loadPedidos();
+  }
+
+  async function loadStats() {
+    try {
+      const pedidos = await sb('pedidos', 'GET', null, '?estado=eq.pendiente');
+      const prods = await sb('productos', 'GET', null, '?select=id');
+      document.getElementById('stat-solicitudes').textContent = pedidos ? pedidos.length : 0;
+      document.getElementById('stat-productos').textContent = prods ? prods.length : 0;
+    } catch(e) { console.error(e); }
+  }
+
+  async function loadPedidos() {
+    const list = document.getElementById('pedidos-list');
+    try {
+      const pedidos = await sb('pedidos', 'GET', null, '?order=created_at.desc');
+      if (!pedidos || pedidos.length === 0) { list.innerHTML = '<div class="empty-state">No hay pedidos aún.</div>'; return; }
+      list.innerHTML = pedidos.map(p => `
+        <div class="pedido-item">
+          <div class="pedido-header">
+            <div style="flex:1;">
+              <div class="pedido-name">${p.nombre} ${p.apellidos}</div>
+              <div class="pedido-info">${p.tipo === 'busqueda' ? '🔍 Búsqueda: ' + (p.descripcion_busqueda || '') : '🛍️ Pedido tienda · x' + (p.cantidad || 1)}</div>
+              <div class="pedido-info">📧 ${p.email}</div>
+              <div class="pedido-info">📍 ${p.es_chalet ? 'Chalet Galapagar' : p.direccion}</div>
+              ${p.precio_final ? `<div class="pedido-info" style="color:#D85A30;font-weight:600;">💰 Precio: ${parseFloat(p.precio_final).toFixed(2)}€</div>` : ''}
+              ${p.nota_admin ? `<div class="pedido-info" style="font-style:italic;">💬 ${p.nota_admin}</div>` : ''}
+              <div class="pedido-info" style="color:#999;">${new Date(p.created_at).toLocaleDateString('es-ES')}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <span class="status-badge status-${p.estado}">${p.estado}</span>
+              <div style="margin-top:8px;">
+                <button class="btn-secondary" style="font-size:12px;padding:4px 10px;" onclick="abrirUpdatePedido('${p.id}','${(p.nombre+' '+p.apellidos).replace(/'/g,"\\'")}','${p.estado}',${p.precio_final || 'null'},'${(p.nota_admin||'').replace(/'/g,"\\'")}')">Actualizar</button>
+              </div>
+            </div>
+          </div>
+        </div>`).join('');
+    } catch(e) {
+      list.innerHTML = '<div class="empty-state">Error cargando pedidos.</div>';
+      console.error(e);
+    }
+  }
+
+  function abrirUpdatePedido(id, nombre, estado, precio, nota) {
+    document.getElementById('up-id').value = id;
+    document.getElementById('up-info').textContent = `Cliente: ${nombre}`;
+    document.getElementById('up-estado').value = estado;
+    document.getElementById('up-precio').value = precio !== 'null' ? precio : '';
+    document.getElementById('up-nota').value = nota || '';
+    document.getElementById('up-msg').innerHTML = '';
+    document.getElementById('modal-update-pedido').classList.remove('hidden');
+  }
+
+  async function guardarUpdatePedido() {
+    const id = document.getElementById('up-id').value;
+    const estado = document.getElementById('up-estado').value;
+    const precio = document.getElementById('up-precio').value;
+    const nota = document.getElementById('up-nota').value;
+    showLoading(true);
+    try {
+      await sb(`pedidos?id=eq.${id}`, 'PATCH', { estado, precio_final: precio ? parseFloat(precio) : null, nota_admin: nota || null });
+      document.getElementById('up-msg').innerHTML = '<div class="success-msg">✅ Actualizado correctamente.</div>';
+      loadPedidos(); loadStats();
+      setTimeout(() => closeModal('modal-update-pedido'), 1500);
+    } catch(e) {
+      document.getElementById('up-msg').innerHTML = '<div class="error-msg">Error al actualizar.</div>';
+      console.error(e);
+    }
+    showLoading(false);
+  }
+
+  async function loadProductosAdmin() {
+    const list = document.getElementById('productos-admin-list');
+    try {
+      const prods = await sb('productos', 'GET', null, '?order=created_at.desc');
+      if (!prods || prods.length === 0) { list.innerHTML = '<div class="empty-state">No hay productos. Añade uno desde la pestaña "Añadir producto".</div>'; return; }
+      list.innerHTML = prods.map(p => `
+        <div class="pedido-item" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="font-size:32px;">${p.emoji || '📦'}</div>
+            <div>
+              <div style="font-weight:600;font-size:14px;">${p.nombre}</div>
+              <div style="font-size:12px;color:#666;">${parseFloat(p.precio).toFixed(2)}€ &middot; <span class="status-badge stock-badge-${p.stock}">${p.stock}</span></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0;">
+            <button class="btn-secondary" style="font-size:12px;padding:5px 10px;" onclick="editarProducto('${p.id}')">Editar</button>
+            <button class="btn-secondary" style="font-size:12px;padding:5px 10px;color:#A32D2D;border-color:#F7C1C1;" onclick="eliminarProducto('${p.id}')">Borrar</button>
+          </div>
+        </div>`).join('');
+    } catch(e) {
+      list.innerHTML = '<div class="empty-state">Error cargando productos.</div>';
+      console.error(e);
+    }
+  }
+
+  async function editarProducto(id) {
+    showLoading(true);
+    try {
+      const prods = await sb('productos', 'GET', null, `?id=eq.${id}`);
+      const p = prods[0];
+      editingProductId = id;
+      document.getElementById('prod-edit-id').value = id;
+      document.getElementById('prod-nombre').value = p.nombre;
+      document.getElementById('prod-desc').value = p.descripcion || '';
+      document.getElementById('prod-precio').value = p.precio;
+      document.getElementById('prod-emoji').value = p.emoji || '';
+      document.getElementById('prod-imagen').value = p.imagen_url || '';
+      document.getElementById('prod-stock').value = p.stock;
+      document.getElementById('prod-form-title').textContent = 'Editar producto';
+      document.getElementById('prod-msg').innerHTML = '';
+      adminTab('nuevo-producto');
+    } catch(e) { console.error(e); }
+    showLoading(false);
+  }
+
+  async function eliminarProducto(id) {
+    if (!confirm('¿Seguro que quieres eliminar este producto?')) return;
+    showLoading(true);
+    try {
+      await sb(`productos?id=eq.${id}`, 'DELETE');
+      loadProductosAdmin(); loadStats();
+    } catch(e) { console.error(e); }
+    showLoading(false);
+  }
+
+  function cancelarEditProduct() {
+    editingProductId = null;
+    document.getElementById('prod-edit-id').value = '';
+    document.getElementById('prod-nombre').value = '';
+    document.getElementById('prod-desc').value = '';
+    document.getElementById('prod-precio').value = '';
+    document.getElementById('prod-emoji').value = '';
+    document.getElementById('prod-imagen').value = '';
+    document.getElementById('prod-stock').value = 'disponible';
+    document.getElementById('prod-form-title').textContent = 'Nuevo producto';
+    document.getElementById('prod-msg').innerHTML = '';
+    adminTab('tienda-admin');
+  }
+
+  async function guardarProducto() {
+    const nombre = document.getElementById('prod-nombre').value.trim();
+    const desc = document.getElementById('prod-desc').value.trim();
+    const precio = parseFloat(document.getElementById('prod-precio').value);
+    const emoji = document.getElementById('prod-emoji').value.trim();
+    const imagen = document.getElementById('prod-imagen').value.trim();
+    const stock = document.getElementById('prod-stock').value;
+    if (!nombre || !precio) { document.getElementById('prod-msg').innerHTML = '<div class="error-msg">Nombre y precio son obligatorios.</div>'; return; }
+    showLoading(true);
+    try {
+      const data = { nombre, descripcion: desc, precio, emoji, imagen_url: imagen || null, stock };
+      if (editingProductId) {
+        await sb(`productos?id=eq.${editingProductId}`, 'PATCH', data);
+      } else {
+        await sb('productos', 'POST', data);
+      }
+      document.getElementById('prod-msg').innerHTML = '<div class="success-msg">✅ Producto guardado correctamente.</div>';
+      editingProductId = null;
+      loadProductosAdmin(); loadStats();
+      setTimeout(() => cancelarEditProduct(), 1500);
+    } catch(e) {
+      document.getElementById('prod-msg').innerHTML = '<div class="error-msg">Error al guardar. Inténtalo de nuevo.</div>';
+      console.error(e);
+    }
+    showLoading(false);
+  }
+
+  loadProductos();
+</script>
+</body>
+</html>
