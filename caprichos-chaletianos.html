@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caprichos Chaletianos P&J</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #D85A30;
+  --orange-light: #FAECE7;
+  --orange-dark: #993C1D;
+  --bg: #FAF9F6;
+  --bg2: #F2F0EB;
+  --white: #ffffff;
+  --text: #1C1A18;
+  --text2: #6B6560;
+  --text3: #9B9590;
+  --border: #E8E4DE;
+  --border2: #D4CFC8;
+  --green: #3B6D11;
+  --green-bg: #EAF3DE;
+  --red: #A32D2D;
+  --red-bg: #FCEBEB;
+  --blue: #185FA5;
+  --blue-bg: #E6F1FB;
+  --amber: #854F0B;
+  --amber-bg: #FAEEDA;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.hidden { display: none !important; }
+.page { display: none; }
+.page.active { display: block; }
+
+nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+.logo { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--text); }
+.logo span { color: var(--orange); }
+.nav-links { display: flex; gap: 6px; align-items: center; }
+.nav-btn {
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 20px; padding: 6px 16px;
+  font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text2);
+  font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+}
+.nav-btn:hover { background: var(--bg2); color: var(--text); }
+.nav-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+.reward-bar {
+  background: linear-gradient(135deg, #1C1A18 0%, #2E2A25 100%);
+  color: white; padding: 1rem 1.5rem; position: relative; overflow: hidden;
+}
+.reward-bar::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 120px; height: 120px; background: var(--orange); opacity: 0.08; border-radius: 50%;
+}
+.reward-inner { max-width: 900px; margin: 0 auto; }
+.reward-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 12px; }
+.reward-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; }
+.reward-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.reward-count { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+.reward-count strong { color: white; }
+.reward-gift-info { text-align: right; }
+.reward-gift-name { font-size: 12px; font-weight: 600; color: var(--orange); }
+.reward-gift-img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 2px solid var(--orange); margin-top: 4px; display: none; margin-left: auto; }
+.reward-gift-img.visible { display: block; }
+.reward-track { background: rgba(255,255,255,0.1); border-radius: 20px; height: 8px; position: relative; overflow: hidden; }
+.reward-fill { height: 100%; background: linear-gradient(90deg, var(--orange-dark), var(--orange)); border-radius: 20px; transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1); }
+.reward-dots { display: flex; justify-content: space-between; margin-top: 6px; }
+.reward-dot { font-size: 10px; color: rgba(255,255,255,0.35); }
+.reward-dot.active { color: var(--orange); font-weight: 700; }
+
+.container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+.hero { text-align: center; padding: 2.5rem 1rem 2rem; }
+.badge { display: inline-block; background: var(--orange-light); color: var(--orange-dark); font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; margin-bottom: 8px; line-height: 1.2; }
+.hero p { color: var(--text2); font-size: 15px; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; margin-bottom: 1.25rem; }
+
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
+.product-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; box-shadow: var(--shadow); }
+.product-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.product-img { width: 100%; height: 160px; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 52px; overflow: hidden; }
+.product-img img { width: 100%; height: 100%; object-fit: cover; }
+.product-body { padding: 1rem; }
+.product-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.product-desc { font-size: 12px; color: var(--text2); margin-bottom: 10px; line-height: 1.5; }
+.product-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.product-price { font-size: 17px; font-weight: 700; color: var(--orange); }
+.stock-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+.stock-disponible { background: var(--green-bg); color: var(--green); }
+.stock-pocas { background: var(--amber-bg); color: var(--amber); }
+.stock-agotado { background: #f1f1f1; color: var(--text3); }
+
+.btn-primary { background: var(--orange); color: white; border: none; border-radius: var(--radius-sm); padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s, transform 0.1s; width: 100%; margin-top: 10px; }
+.btn-primary:hover { background: var(--orange-dark); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn-secondary { background: transparent; border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text); font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+.btn-secondary:hover { background: var(--bg2); }
+.btn-danger { background: transparent; border: 1px solid #F7C1C1; border-radius: var(--radius-sm); padding: 6px 12px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--red); font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+.btn-danger:hover { background: var(--red-bg); }
+
+.form-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
+input, textarea, select { width: 100%; border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 13px; font-size: 14px; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); margin-bottom: 12px; outline: none; transition: border-color 0.15s, background 0.15s; }
+input:focus, textarea:focus, select:focus { border-color: var(--orange); background: var(--white); }
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.type-select { display: flex; gap: 8px; margin-bottom: 16px; }
+.type-btn { flex: 1; padding: 9px; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); background: transparent; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.type-btn:hover { background: var(--bg2); }
+.type-btn.active { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(28,26,24,0.55); backdrop-filter: blur(3px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: var(--white); border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: var(--shadow-lg); animation: slideUp 0.25s ease; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; padding-right: 2rem; }
+.modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+.modal-close { position: absolute; top: 1.25rem; right: 1.25rem; background: var(--bg2); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 16px; cursor: pointer; color: var(--text2); display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.modal-close:hover { background: var(--border); }
+
+.success-msg { background: var(--green-bg); color: var(--green); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; margin-top: 1rem; font-weight: 500; }
+.error-msg { background: var(--red-bg); color: var(--red); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; margin-top: 1rem; font-weight: 500; }
+.status-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+.status-pendiente { background: var(--amber-bg); color: var(--amber); }
+.status-buscando { background: var(--blue-bg); color: var(--blue); }
+.status-listo { background: var(--green-bg); color: var(--green); }
+.status-entregado { background: var(--bg2); color: var(--text3); }
+
+.login-card { max-width: 380px; margin: 5rem auto; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; box-shadow: var(--shadow-lg); }
+.login-card h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.login-card p { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; }
+
+.admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.admin-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+.admin-header p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+.stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.25rem; text-align: center; box-shadow: var(--shadow); }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--orange); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; font-weight: 500; }
+
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.tab-btn { background: var(--white); border: 1px solid var(--border2); border-radius: 20px; padding: 7px 16px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.tab-btn:hover { background: var(--bg2); color: var(--text); }
+.tab-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+.admin-panel { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); }
+
+.pedido-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; transition: border-color 0.15s; }
+.pedido-item:hover { border-color: var(--border2); }
+.pedido-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.pedido-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.pedido-product { font-size: 13px; font-weight: 600; color: var(--orange); margin-bottom: 3px; }
+.pedido-info { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.pedido-actions { display: flex; gap: 6px; flex-shrink: 0; flex-direction: column; align-items: flex-end; }
+
+.loading-overlay { position: fixed; inset: 0; background: rgba(28,26,24,0.35); backdrop-filter: blur(2px); z-index: 300; display: flex; align-items: center; justify-content: center; }
+.loading-box { background: var(--white); border-radius: var(--radius); padding: 1.5rem 2rem; font-size: 14px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-lg); font-weight: 500; }
+.loading-spinner { width: 20px; height: 20px; border: 2px solid var(--bg2); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.65s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.info-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+.info-section h3 { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+.info-list { list-style: none; }
+.info-list li { font-size: 14px; color: var(--text2); padding: 7px 0; border-bottom: 1px solid var(--border); line-height: 1.6; display: flex; gap: 8px; }
+.info-list li:last-child { border-bottom: none; }
+.info-list li::before { content: '→'; color: var(--orange); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.info-highlight { background: var(--orange-light); border: 1px solid #F5C4B3; border-radius: var(--radius-sm); padding: 14px 16px; font-size: 13px; color: var(--orange-dark); font-weight: 600; margin-bottom: 1rem; line-height: 1.6; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.contact-card { background: var(--bg2); border-radius: var(--radius-sm); padding: 1rem; text-align: center; }
+.contact-card .name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.contact-card .email { font-size: 12px; color: var(--orange); font-weight: 500; }
+
+.reward-admin-form { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 1rem; background: var(--bg); }
+.reward-admin-form h4 { font-size: 14px; font-weight: 700; margin-bottom: 1rem; }
+
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
+.empty-state .big { font-size: 40px; margin-bottom: 10px; }
+
+.info-banner { background: var(--text); color: rgba(255,255,255,0.75); font-size: 12px; text-align: center; padding: 7px 1rem; font-weight: 500; letter-spacing: 0.3px; }
+.info-banner span { color: var(--orange); }
+
+@media (max-width: 600px) {
+  .form-row, .stats-grid, .info-grid { grid-template-columns: 1fr; }
+  .nav-links { gap: 4px; }
+  .nav-btn { padding: 5px 10px; font-size: 12px; }
+  .logo { font-size: 15px; }
+  .hero h1 { font-size: 26px; }
+  .reward-top { flex-direction: column; gap: 6px; }
+  .reward-gift-info { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay" class="loading-overlay hidden">
+  <div class="loading-box"><div class="loading-spinner"></div> Procesando...</div>
+</div>
+
+<div class="info-banner">Pedidos los <span>lunes</span> · Pago en efectivo · Solo en TL del finde</div>
+
+<nav>
+  <div class="logo">Caprichos <span>Chaletianos</span> P&amp;J</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('tienda')">Tienda</button>
+    <button class="nav-btn" onclick="showPage('solicitar')">Solicitar</button>
+    <button class="nav-btn" onclick="showPage('info')">Info</button>
+    <button class="nav-btn" id="admin-nav-btn" onclick="goAdmin()">Admin</button>
+  </div>
+</nav>
+
+<!-- REWARD BAR -->
+<div class="reward-bar">
+  <div class="reward-inner">
+    <div class="reward-top">
+      <div>
+        <div class="reward-title">🎁 Recompensa del Chalet</div>
+        <div class="reward-sub">Cada 10 pedidos, regalo para todos</div>
+        <div class="reward-count"><strong id="reward-current">0</strong>/10 pedidos</div>
+      </div>
+      <div class="reward-gift-info">
+        <div class="reward-gift-name" id="reward-gift-name">Próximamente...</div>
+        <img id="reward-gift-img" class="reward-gift-img" src="" alt="Regalo">
+      </div>
+    </div>
+    <div class="reward-track">
+      <div class="reward-fill" id="reward-fill" style="width:0%"></div>
+    </div>
+    <div class="reward-dots">
+      <span class="reward-dot" id="dot-0">0</span>
+      <span class="reward-dot" id="dot-2">2</span>
+      <span class="reward-dot" id="dot-4">4</span>
+      <span class="reward-dot" id="dot-6">6</span>
+      <span class="reward-dot" id="dot-8">8</span>
+      <span class="reward-dot" id="dot-10">🎁</span>
+    </div>
+  </div>
+</div>
+
+<!-- TIENDA -->
+<div id="page-tienda" class="page active">
+  <div class="container">
+    <div class="hero">
+      <div class="badge">Chalet Galapagar</div>
+      <h1>Vuestros caprichos, a buen precio</h1>
+      <p>Seleccionamos los mejores productos. Pago en efectivo cuando pasemos a entregar.</p>
+    </div>
+    <div class="section-title">Productos disponibles</div>
+    <div id="products-grid" class="products-grid">
+      <div class="empty-state"><div class="big">🛍️</div>Cargando productos...</div>
+    </div>
+  </div>
+</div>
+
+<!-- SOLICITAR -->
+<div id="page-solicitar" class="page">
+  <div class="container">
+    <div class="hero">
+      <div class="badge">Búsqueda personalizada</div>
+      <h1>Solicita lo que quieras</h1>
+      <p>¿No lo ves en la tienda? Dinos qué buscas y te lo encontramos. Siempre hay más opciones.</p>
+    </div>
+    <div class="form-card">
+      <div class="type-select">
+        <button class="type-btn active" id="type-chalet" onclick="setUserType('chalet')">🏠 Soy del Chalet</button>
+        <button class="type-btn" id="type-externo" onclick="setUserType('externo')">🌍 Soy externo</button>
+      </div>
+      <div id="form-chalet-fields">
+        <div class="form-row">
+          <div><label>Nombre</label><input type="text" id="b-nombre" placeholder="Tu nombre"></div>
+          <div><label>Apellidos</label><input type="text" id="b-apellidos" placeholder="Tus apellidos"></div>
+        </div>
+      </div>
+      <div id="form-externo-fields" class="hidden">
+        <div class="form-row">
+          <div><label>Nombre</label><input type="text" id="b-nombre-ext" placeholder="Tu nombre"></div>
+          <div><label>Apellidos</label><input type="text" id="b-apellidos-ext" placeholder="Tus apellidos"></div>
+        </div>
+        <label>Correo electrónico</label>
+        <input type="email" id="b-email-ext" placeholder="tu@email.com">
+        <label>Dirección de entrega</label>
+        <input type="text" id="b-direccion-ext" placeholder="Calle, número, ciudad...">
+      </div>
+      <label>¿Qué producto buscas?</label>
+      <textarea id="b-descripcion" placeholder="Describe el producto: qué es, talla, color, modelo... Cuanto más detalles, mejor."></textarea>
+      <label>Presupuesto máximo (opcional)</label>
+      <input type="text" id="b-presupuesto" placeholder="Ej: 20€">
+      <button class="btn-primary" onclick="enviarBusqueda()">Enviar solicitud</button>
+      <div id="busqueda-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- INFO -->
+<div id="page-info" class="page">
+  <div class="container">
+    <div class="hero">
+      <div class="badge">Información</div>
+      <h1>¿Cómo funciona?</h1>
+      <p>Todo lo que necesitas saber antes de pedir.</p>
+    </div>
+    <div class="info-highlight">⚠️ IMPORTANTE: A la mínima que el padre nos llama la atención —ya sea por la página o por usarla cuando no toca— la tienda desaparece. Usadla SOLO en los ratos de TL del fin de semana. Aprovechad el estudio.</div>
+    <div class="info-section">
+      <h3>📋 Cómo pedir</h3>
+      <ul class="info-list">
+        <li>Busca en el catálogo o usa "Solicitar" para pedir cualquier cosa</li>
+        <li>Nos llega tu solicitud y te escribimos por correo con opciones</li>
+        <li>Te enseñamos fotos, tallas, colores, modelos y precios</li>
+        <li>Cuando confirmas → lo pedimos. ¡Siempre hay más opciones de las que ves!</li>
+      </ul>
+    </div>
+    <div class="info-grid">
+      <div class="info-section">
+        <h3>📦 Pedidos</h3>
+        <ul class="info-list">
+          <li>Se hacen todos los lunes</li>
+          <li>No hay pedido mínimo</li>
+          <li>Puedes pedir varias cosas</li>
+          <li>Puede haber límite en algunos productos (réplicas)</li>
+        </ul>
+      </div>
+      <div class="info-section">
+        <h3>❌ Cancelaciones</h3>
+        <ul class="info-list">
+          <li>Antes del lunes → se puede cancelar</li>
+          <li>Después del lunes → NO (ya está pedido)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-section">
+        <h3>💰 Precios y pago</h3>
+        <ul class="info-list">
+          <li>Precio final ya incluido, sin extras</li>
+          <li>Incluye producto + envío + nuestro tiempo</li>
+          <li>Nunca se añade dinero después</li>
+          <li>Solo efectivo, se paga al recibir</li>
+          <li>Intentad traer el dinero justo</li>
+        </ul>
+      </div>
+      <div class="info-section">
+        <h3>🚚 Entrega</h3>
+        <ul class="info-list">
+          <li>Llega a casa de Pere</li>
+          <li>Lo llevamos al Chalet el finde</li>
+          <li>También se puede enviar a casa si hace falta</li>
+          <li>Sin tiempo exacto (depende del proveedor)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="info-section">
+      <h3>⚡ Condiciones importantes</h3>
+      <ul class="info-list">
+        <li>Son productos baratos → no hay garantía total</li>
+        <li>Si llega mal o defectuoso → se asume el riesgo</li>
+        <li>Si ya no lo quieres → busca a alguien que lo quiera</li>
+        <li>Aun así, intentaremos ayudar en lo que podamos</li>
+        <li>Esto no es una tienda profesional. Funciona con confianza</li>
+      </ul>
+    </div>
+    <div class="info-section">
+      <h3>✉️ Contacto y dudas</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Para cualquier duda: más fotos, modelos, colores, tallas, precios... ¡preguntad siempre sin problema!</p>
+      <div class="info-grid">
+        <div class="contact-card"><div class="name">Joaquín</div><div class="email">joaquinmorenoblas@gmail.com</div></div>
+        <div class="contact-card"><div class="name">Pere</div><div class="email">peresitobusquetmartinez@gmail.com</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="page-admin-login" class="page">
+  <div class="container">
+    <div class="login-card">
+      <h2>Panel Admin</h2>
+      <p>Acceso exclusivo para Joaquín y Pere</p>
+      <label>Usuario</label>
+      <input type="text" id="admin-user" placeholder="joaquin o pere">
+      <label>Contraseña</label>
+      <input type="password" id="admin-pass" placeholder="••••••••">
+      <button class="btn-primary" style="margin-top:4px;" onclick="adminLogin()">Entrar al panel</button>
+      <div id="login-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="page-admin" class="page">
+  <div class="container">
+    <div class="admin-header">
+      <div><h2>Panel Admin</h2><p id="admin-welcome"></p></div>
+      <button class="btn-secondary" onclick="adminLogout()">Cerrar sesión</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="stat-solicitudes">0</div><div class="stat-label">Solicitudes pendientes</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-productos">0</div><div class="stat-label">Productos en tienda</div></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="adminTab('pedidos')">Solicitudes</button>
+      <button class="tab-btn" onclick="adminTab('tienda-admin')">Gestionar tienda</button>
+      <button class="tab-btn" onclick="adminTab('nuevo-producto')">+ Producto</button>
+      <button class="tab-btn" onclick="adminTab('recompensa')">🎁 Recompensa</button>
+    </div>
+    <div id="tab-pedidos" class="admin-panel">
+      <div id="pedidos-list"><div class="empty-state"><div class="big">📋</div>Cargando...</div></div>
+    </div>
+    <div id="tab-tienda-admin" class="admin-panel hidden">
+      <div id="productos-admin-list"><div class="empty-state"><div class="big">📦</div>Cargando...</div></div>
+    </div>
+    <div id="tab-nuevo-producto" class="admin-panel hidden">
+      <div style="font-size:16px;font-weight:700;margin-bottom:1.25rem;font-family:'Playfair Display',serif;" id="prod-form-title">Nuevo producto</div>
+      <input type="hidden" id="prod-edit-id">
+      <label>Nombre del producto</label>
+      <input type="text" id="prod-nombre" placeholder="Ej: Auriculares Bluetooth">
+      <label>Descripción</label>
+      <textarea id="prod-desc" placeholder="Describe brevemente el producto..."></textarea>
+      <div class="form-row">
+        <div><label>Precio (€)</label><input type="number" id="prod-precio" placeholder="19.99" step="0.01"></div>
+        <div><label>Emoji</label><input type="text" id="prod-emoji" placeholder="🎧" maxlength="2"></div>
+      </div>
+      <label>URL de imagen (opcional)</label>
+      <input type="text" id="prod-imagen" placeholder="https://...">
+      <label>Stock</label>
+      <select id="prod-stock">
+        <option value="disponible">Disponible</option>
+        <option value="pocas">Pocas unidades</option>
+        <option value="agotado">Agotado</option>
+      </select>
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <button class="btn-primary" style="flex:1;" onclick="guardarProducto()">Guardar producto</button>
+        <button class="btn-secondary" onclick="cancelarEditProduct()">Cancelar</button>
+      </div>
+      <div id="prod-msg"></div>
+    </div>
+    <div id="tab-recompensa" class="admin-panel hidden">
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px;font-family:'Playfair Display',serif;">Editar barra de recompensa</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6;">Edita manualmente el contador y el regalo. Tú decides cuándo avanza. Va de 0 a 10.</p>
+      <div class="reward-admin-form">
+        <h4>Contador actual</h4>
+        <label>Número de pedidos (0 a 10)</label>
+        <input type="number" id="r-count" min="0" max="10" placeholder="Ej: 3">
+      </div>
+      <div class="reward-admin-form">
+        <h4>El regalo</h4>
+        <label>Nombre del regalo</label>
+        <input type="text" id="r-name" placeholder="Ej: Pizza para todos 🍕">
+        <label>URL de imagen del regalo (opcional)</label>
+        <input type="text" id="r-img" placeholder="https://...">
+      </div>
+      <button class="btn-primary" style="width:auto;padding:10px 24px;" onclick="guardarRecompensa()">Guardar cambios</button>
+      <div id="reward-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SOLICITAR TIENDA -->
+<div id="modal-solicitar" class="modal-overlay hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-solicitar')">&times;</button>
+    <h2 id="modal-product-name">Solicitar producto</h2>
+    <p class="modal-sub">Confirma tu pedido. Te contactaremos por correo con opciones de tallas, colores y precio final.</p>
+    <div class="type-select">
+      <button class="type-btn active" id="mt-chalet" onclick="setModalType('chalet')">🏠 Del Chalet</button>
+      <button class="type-btn" id="mt-externo" onclick="setModalType('externo')">🌍 Externo</button>
+    </div>
+    <div id="modal-chalet-fields">
+      <div class="form-row">
+        <div><label>Nombre</label><input type="text" id="m-nombre" placeholder="Tu nombre"></div>
+        <div><label>Apellidos</label><input type="text" id="m-apellidos" placeholder="Tus apellidos"></div>
+      </div>
+    </div>
+    <div id="modal-externo-fields" class="hidden">
+      <div class="form-row">
+        <div><label>Nombre</label><input type="text" id="m-nombre-ext" placeholder="Tu nombre"></div>
+        <div><label>Apellidos</label><input type="text" id="m-apellidos-ext" placeholder="Tus apellidos"></div>
+      </div>
+      <label>Email</label>
+      <input type="email" id="m-email-ext" placeholder="tu@email.com">
+      <label>Dirección</label>
+      <input type="text" id="m-dir-ext" placeholder="Dirección de entrega">
+    </div>
+    <label>Cantidad</label>
+    <input type="number" id="m-cantidad" value="1" min="1" max="99">
+    <input type="hidden" id="m-product-id">
+    <input type="hidden" id="m-product-name-hidden">
+    <button class="btn-primary" onclick="confirmarPedido()">Confirmar pedido</button>
+    <div id="modal-msg"></div>
+  </div>
+</div>
+
+<!-- MODAL ACTUALIZAR PEDIDO -->
+<div id="modal-update-pedido" class="modal-overlay hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-update-pedido')">&times;</button>
+    <h2>Actualizar pedido</h2>
+    <input type="hidden" id="up-id">
+    <div style="margin-bottom:12px;font-size:14px;font-weight:600;color:var(--text2);" id="up-info"></div>
+    <label>Estado</label>
+    <select id="up-estado">
+      <option value="pendiente">Pendiente</option>
+      <option value="buscando">Buscando</option>
+      <option value="listo">Listo para recoger</option>
+      <option value="entregado">Entregado</option>
+    </select>
+    <label>Precio final (€)</label>
+    <input type="number" id="up-precio" placeholder="Ej: 15.50" step="0.01">
+    <label>Nota para el cliente</label>
+    <textarea id="up-nota" placeholder="Ej: Lo tengo para el jueves, avísame..."></textarea>
+    <button class="btn-primary" onclick="guardarUpdatePedido()">Guardar cambios</button>
+    <div id="up-msg"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://btxwrxkwylqoivxgxvte.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0eHdyeGt3eWxxb2l2eGd4dnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjkxOTgsImV4cCI6MjA5MTY0NTE5OH0.ZME2ppoMJ0BKDl2nTwHWob9VQt9rCJtm_VjzCH8sb2Q';
+const ADMINS = { joaquin: { pass: 'joaquin2024', nombre: 'Joaquín' }, pere: { pass: 'pere2024', nombre: 'Pere' } };
+
+let adminSession = null, userType = 'chalet', modalUserType = 'chalet', editingProductId = null;
+
+const sb = async (endpoint, method = 'GET', body = null, extra = '') => {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}${extra}`, {
+    method,
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': (method==='POST'||method==='PATCH') ? 'return=representation' : '' },
+    body: body ? JSON.stringify(body) : null
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const t = await res.text(); return t ? JSON.parse(t) : null;
+};
+
+function showLoading(v) { document.getElementById('loading-overlay').classList.toggle('hidden', !v); }
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${name}`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const map = { tienda:0, solicitar:1, info:2 };
+  if (map[name] !== undefined) document.querySelectorAll('.nav-btn')[map[name]].classList.add('active');
+  if (name === 'tienda') loadProductos();
+  if (name === 'admin') { loadPedidos(); loadProductosAdmin(); loadStats(); loadRecompensaAdmin(); }
+}
+
+function goAdmin() { if (adminSession) showPage('admin'); else showPage('admin-login'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+function setUserType(t) {
+  userType = t;
+  ['chalet','externo'].forEach(x => document.getElementById(`type-${x}`).classList.toggle('active', x===t));
+  document.getElementById('form-chalet-fields').classList.toggle('hidden', t!=='chalet');
+  document.getElementById('form-externo-fields').classList.toggle('hidden', t!=='externo');
+}
+
+function setModalType(t) {
+  modalUserType = t;
+  ['chalet','externo'].forEach(x => document.getElementById(`mt-${x}`).classList.toggle('active', x===t));
+  document.getElementById('modal-chalet-fields').classList.toggle('hidden', t!=='chalet');
+  document.getElementById('modal-externo-fields').classList.toggle('hidden', t!=='externo');
+}
+
+async function loadRecompensa() {
+  try {
+    const data = await sb('recompensa', 'GET', null, '?limit=1');
+    if (data && data.length > 0) {
+      const r = data[0];
+      const count = Math.min(parseInt(r.count)||0, 10);
+      document.getElementById('reward-current').textContent = count;
+      document.getElementById('reward-fill').style.width = (count/10*100)+'%';
+      document.getElementById('reward-gift-name').textContent = r.gift_name || 'Próximamente...';
+      const img = document.getElementById('reward-gift-img');
+      if (r.gift_img) { img.src = r.gift_img; img.classList.add('visible'); } else { img.classList.remove('visible'); }
+      [0,2,4,6,8,10].forEach(n => { const el = document.getElementById(`dot-${n}`); if(el) el.classList.toggle('active', count>=n); });
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function loadRecompensaAdmin() {
+  try {
+    const data = await sb('recompensa', 'GET', null, '?limit=1');
+    if (data && data.length > 0) {
+      document.getElementById('r-count').value = data[0].count||0;
+      document.getElementById('r-name').value = data[0].gift_name||'';
+      document.getElementById('r-img').value = data[0].gift_img||'';
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function guardarRecompensa() {
+  const count = parseInt(document.getElementById('r-count').value);
+  const gift_name = document.getElementById('r-name').value.trim();
+  const gift_img = document.getElementById('r-img').value.trim();
+  if (isNaN(count)||count<0||count>10) { document.getElementById('reward-msg').innerHTML='<div class="error-msg">El contador debe ser entre 0 y 10.</div>'; return; }
+  showLoading(true);
+  try {
+    const existing = await sb('recompensa','GET',null,'?limit=1');
+    if (existing && existing.length>0) await sb(`recompensa?id=eq.${existing[0].id}`,'PATCH',{count,gift_name,gift_img:gift_img||null});
+    else await sb('recompensa','POST',{count,gift_name,gift_img:gift_img||null});
+    document.getElementById('reward-msg').innerHTML='<div class="success-msg">✅ Recompensa actualizada.</div>';
+    loadRecompensa();
+    setTimeout(()=>{ document.getElementById('reward-msg').innerHTML=''; },2000);
+  } catch(e) { document.getElementById('reward-msg').innerHTML='<div class="error-msg">Error al guardar.</div>'; console.error(e); }
+  showLoading(false);
+}
+
+async function loadProductos() {
+  const grid = document.getElementById('products-grid');
+  try {
+    const prods = await sb('productos','GET',null,'?order=created_at.desc');
+    if (!prods||prods.length===0) { grid.innerHTML='<div class="empty-state"><div class="big">🛍️</div>No hay productos aún. ¡Pronto habrá novedades!</div>'; return; }
+    grid.innerHTML = prods.map(p=>`
+      <div class="product-card">
+        <div class="product-img">${p.imagen_url?`<img src="${p.imagen_url}" alt="${p.nombre}">`:(p.emoji||'📦')}</div>
+        <div class="product-body">
+          <div class="product-name">${p.nombre}</div>
+          <div class="product-desc">${p.descripcion||''}</div>
+          <div class="product-footer">
+            <div class="product-price">${parseFloat(p.precio).toFixed(2)}€</div>
+            <span class="stock-tag stock-${p.stock}">${p.stock==='disponible'?'Disponible':p.stock==='pocas'?'Pocas unidades':'Agotado'}</span>
+          </div>
+          ${p.stock!=='agotado'?`<button class="btn-primary" onclick="abrirModalSolicitar('${p.id}','${p.nombre.replace(/'/g,"\\'")}')">Solicitar</button>`:`<button class="btn-primary" disabled>Agotado</button>`}
+        </div>
+      </div>`).join('');
+  } catch(e) { grid.innerHTML='<div class="empty-state"><div class="big">⚠️</div>Error cargando productos.</div>'; console.error(e); }
+}
+
+function abrirModalSolicitar(productId, productName) {
+  document.getElementById('m-product-id').value = productId;
+  document.getElementById('m-product-name-hidden').value = productName;
+  document.getElementById('modal-product-name').textContent = productName;
+  document.getElementById('modal-msg').innerHTML = '';
+  document.getElementById('m-nombre').value = '';
+  document.getElementById('m-apellidos').value = '';
+  document.getElementById('m-cantidad').value = '1';
+  setModalType('chalet');
+  document.getElementById('modal-solicitar').classList.remove('hidden');
+}
+
+async function confirmarPedido() {
+  const productId = document.getElementById('m-product-id').value;
+  const productName = document.getElementById('m-product-name-hidden').value;
+  const cantidad = parseInt(document.getElementById('m-cantidad').value)||1;
+  let nombre, apellidos, email, direccion;
+  if (modalUserType==='chalet') {
+    nombre = document.getElementById('m-nombre').value.trim();
+    apellidos = document.getElementById('m-apellidos').value.trim();
+    if (!nombre||!apellidos) { document.getElementById('modal-msg').innerHTML='<div class="error-msg">Pon tu nombre y apellidos.</div>'; return; }
+    email = `${nombre.toLowerCase()}.${apellidos.toLowerCase().replace(/\s+/g,'.')}@chalet.es`;
+    direccion = 'Chalet Galapagar';
+  } else {
+    nombre = document.getElementById('m-nombre-ext').value.trim();
+    apellidos = document.getElementById('m-apellidos-ext').value.trim();
+    email = document.getElementById('m-email-ext').value.trim();
+    direccion = document.getElementById('m-dir-ext').value.trim();
+    if (!nombre||!apellidos||!email||!direccion) { document.getElementById('modal-msg').innerHTML='<div class="error-msg">Rellena todos los campos.</div>'; return; }
+  }
+  showLoading(true);
+  try {
+    await sb('pedidos','POST',{nombre,apellidos,email,direccion,product_id:productId,product_name:productName,cantidad,tipo:'tienda',estado:'pendiente',es_chalet:modalUserType==='chalet'});
+    document.getElementById('modal-msg').innerHTML='<div class="success-msg">✅ ¡Pedido registrado! Os contactaremos pronto.</div>';
+    setTimeout(()=>closeModal('modal-solicitar'),2500);
+  } catch(e) { document.getElementById('modal-msg').innerHTML='<div class="error-msg">Error al registrar. Inténtalo de nuevo.</div>'; console.error(e); }
+  showLoading(false);
+}
+
+async function enviarBusqueda() {
+  const descripcion = document.getElementById('b-descripcion').value.trim();
+  const presupuesto = document.getElementById('b-presupuesto').value.trim();
+  if (!descripcion) { document.getElementById('busqueda-msg').innerHTML='<div class="error-msg">Describe el producto que buscas.</div>'; return; }
+  let nombre, apellidos, email, direccion;
+  if (userType==='chalet') {
+    nombre = document.getElementById('b-nombre').value.trim();
+    apellidos = document.getElementById('b-apellidos').value.trim();
+    if (!nombre||!apellidos) { document.getElementById('busqueda-msg').innerHTML='<div class="error-msg">Pon tu nombre y apellidos.</div>'; return; }
+    email = `${nombre.toLowerCase()}.${apellidos.toLowerCase().replace(/\s+/g,'.')}@chalet.es`;
+    direccion = 'Chalet Galapagar';
+  } else {
+    nombre = document.getElementById('b-nombre-ext').value.trim();
+    apellidos = document.getElementById('b-apellidos-ext').value.trim();
+    email = document.getElementById('b-email-ext').value.trim();
+    direccion = document.getElementById('b-direccion-ext').value.trim();
+    if (!nombre||!apellidos||!email||!direccion) { document.getElementById('busqueda-msg').innerHTML='<div class="error-msg">Rellena todos los campos.</div>'; return; }
+  }
+  showLoading(true);
+  try {
+    await sb('pedidos','POST',{nombre,apellidos,email,direccion,descripcion_busqueda:descripcion,presupuesto:presupuesto||null,tipo:'busqueda',estado:'pendiente',es_chalet:userType==='chalet'});
+    document.getElementById('busqueda-msg').innerHTML='<div class="success-msg">✅ ¡Solicitud enviada! Estaremos buscando tu producto pronto.</div>';
+    document.getElementById('b-descripcion').value='';
+    document.getElementById('b-presupuesto').value='';
+  } catch(e) { document.getElementById('busqueda-msg').innerHTML='<div class="error-msg">Error al enviar. Inténtalo de nuevo.</div>'; console.error(e); }
+  showLoading(false);
+}
+
+function adminLogin() {
+  const user = document.getElementById('admin-user').value.trim().toLowerCase();
+  const pass = document.getElementById('admin-pass').value;
+  if (ADMINS[user] && ADMINS[user].pass===pass) {
+    adminSession = { user, nombre: ADMINS[user].nombre };
+    document.getElementById('admin-welcome').textContent = `Hola, ${adminSession.nombre} 👋`;
+    document.getElementById('login-error').innerHTML = '';
+    document.getElementById('admin-nav-btn').textContent = 'Panel ✓';
+    showPage('admin');
+  } else {
+    document.getElementById('login-error').innerHTML='<div class="error-msg" style="margin-top:8px;">Usuario o contraseña incorrectos.</div>';
+  }
+}
+
+function adminLogout() {
+  adminSession = null;
+  document.getElementById('admin-nav-btn').textContent = 'Admin';
+  showPage('tienda');
+}
+
+function adminTab(tab) {
+  ['pedidos','tienda-admin','nuevo-producto','recompensa'].forEach(t => document.getElementById(`tab-${t}`).classList.toggle('hidden', t!==tab));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['pedidos','tienda-admin','nuevo-producto','recompensa'][i]===tab));
+  if (tab==='tienda-admin') loadProductosAdmin();
+  if (tab==='pedidos') loadPedidos();
+  if (tab==='recompensa') loadRecompensaAdmin();
+}
+
+async function loadStats() {
+  try {
+    const p = await sb('pedidos','GET',null,'?estado=eq.pendiente');
+    const pr = await sb('productos','GET',null,'?select=id');
+    document.getElementById('stat-solicitudes').textContent = p?p.length:0;
+    document.getElementById('stat-productos').textContent = pr?pr.length:0;
+  } catch(e) { console.error(e); }
+}
+
+async function loadPedidos() {
+  const list = document.getElementById('pedidos-list');
+  try {
+    const pedidos = await sb('pedidos','GET',null,'?order=created_at.desc');
+    if (!pedidos||pedidos.length===0) { list.innerHTML='<div class="empty-state"><div class="big">📋</div>No hay solicitudes aún.</div>'; return; }
+    list.innerHTML = pedidos.map(p=>`
+      <div class="pedido-item">
+        <div class="pedido-header">
+          <div style="flex:1;">
+            <div class="pedido-name">${p.nombre} ${p.apellidos}</div>
+            ${p.tipo==='tienda'
+              ?`<div class="pedido-product">🛍️ ${p.product_name||'Producto de tienda'} × ${p.cantidad||1}</div>`
+              :`<div class="pedido-product">🔍 Búsqueda personalizada</div>`}
+            ${p.tipo==='busqueda'?`<div class="pedido-info">${p.descripcion_busqueda||''}</div>`:''}
+            ${p.presupuesto?`<div class="pedido-info">💰 Presupuesto: ${p.presupuesto}</div>`:''}
+            <div class="pedido-info">📧 ${p.email}</div>
+            <div class="pedido-info">📍 ${p.es_chalet?'Chalet Galapagar':p.direccion}</div>
+            ${p.precio_final?`<div class="pedido-info" style="color:var(--orange);font-weight:700;">💰 Precio: ${parseFloat(p.precio_final).toFixed(2)}€</div>`:''}
+            ${p.nota_admin?`<div class="pedido-info" style="font-style:italic;">💬 ${p.nota_admin}</div>`:''}
+            <div class="pedido-info" style="color:var(--text3);">${new Date(p.created_at).toLocaleDateString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+          </div>
+          <div class="pedido-actions">
+            <span class="status-badge status-${p.estado}">${p.estado}</span>
+            <button class="btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="abrirUpdatePedido('${p.id}','${(p.nombre+' '+p.apellidos).replace(/'/g,"\\'")}','${p.estado}',${p.precio_final||'null'},'${(p.nota_admin||'').replace(/'/g,"\\'")}')">Actualizar</button>
+            <button class="btn-danger" onclick="eliminarPedido('${p.id}')">Eliminar</button>
+          </div>
+        </div>
+      </div>`).join('');
+  } catch(e) { list.innerHTML='<div class="empty-state"><div class="big">⚠️</div>Error cargando solicitudes.</div>'; console.error(e); }
+}
+
+async function eliminarPedido(id) {
+  if (!confirm('¿Eliminar esta solicitud? Se borrará permanentemente.')) return;
+  showLoading(true);
+  try { await sb(`pedidos?id=eq.${id}`,'DELETE'); loadPedidos(); loadStats(); }
+  catch(e) { console.error(e); }
+  showLoading(false);
+}
+
+function abrirUpdatePedido(id, nombre, estado, precio, nota) {
+  document.getElementById('up-id').value = id;
+  document.getElementById('up-info').textContent = `Cliente: ${nombre}`;
+  document.getElementById('up-estado').value = estado;
+  document.getElementById('up-precio').value = precio!=='null'?precio:'';
+  document.getElementById('up-nota').value = nota||'';
+  document.getElementById('up-msg').innerHTML = '';
+  document.getElementById('modal-update-pedido').classList.remove('hidden');
+}
+
+async function guardarUpdatePedido() {
+  const id = document.getElementById('up-id').value;
+  const estado = document.getElementById('up-estado').value;
+  const precio = document.getElementById('up-precio').value;
+  const nota = document.getElementById('up-nota').value;
+  showLoading(true);
+  try {
+    await sb(`pedidos?id=eq.${id}`,'PATCH',{estado,precio_final:precio?parseFloat(precio):null,nota_admin:nota||null});
+    document.getElementById('up-msg').innerHTML='<div class="success-msg">✅ Actualizado.</div>';
+    loadPedidos(); loadStats();
+    setTimeout(()=>closeModal('modal-update-pedido'),1500);
+  } catch(e) { document.getElementById('up-msg').innerHTML='<div class="error-msg">Error al actualizar.</div>'; console.error(e); }
+  showLoading(false);
+}
+
+async function loadProductosAdmin() {
+  const list = document.getElementById('productos-admin-list');
+  try {
+    const prods = await sb('productos','GET',null,'?order=created_at.desc');
+    if (!prods||prods.length===0) { list.innerHTML='<div class="empty-state"><div class="big">📦</div>No hay productos. Añade desde "+ Producto".</div>'; return; }
+    list.innerHTML = prods.map(p=>`
+      <div class="pedido-item" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:34px;">${p.emoji||'📦'}</div>
+          <div>
+            <div style="font-weight:700;font-size:14px;">${p.nombre}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px;">${parseFloat(p.precio).toFixed(2)}€ · <span class="stock-tag stock-${p.stock}" style="padding:1px 7px;font-size:10px;">${p.stock}</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="editarProducto('${p.id}')">Editar</button>
+          <button class="btn-danger" onclick="eliminarProducto('${p.id}')">Borrar</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { list.innerHTML='<div class="empty-state"><div class="big">⚠️</div>Error.</div>'; console.error(e); }
+}
+
+async function editarProducto(id) {
+  showLoading(true);
+  try {
+    const prods = await sb('productos','GET',null,`?id=eq.${id}`);
+    const p = prods[0]; editingProductId = id;
+    document.getElementById('prod-edit-id').value = id;
+    document.getElementById('prod-nombre').value = p.nombre;
+    document.getElementById('prod-desc').value = p.descripcion||'';
+    document.getElementById('prod-precio').value = p.precio;
+    document.getElementById('prod-emoji').value = p.emoji||'';
+    document.getElementById('prod-imagen').value = p.imagen_url||'';
+    document.getElementById('prod-stock').value = p.stock;
+    document.getElementById('prod-form-title').textContent = 'Editar producto';
+    document.getElementById('prod-msg').innerHTML = '';
+    adminTab('nuevo-producto');
+  } catch(e) { console.error(e); }
+  showLoading(false);
+}
+
+async function eliminarProducto(id) {
+  if (!confirm('¿Borrar este producto de la tienda?')) return;
+  showLoading(true);
+  try { await sb(`productos?id=eq.${id}`,'DELETE'); loadProductosAdmin(); loadStats(); }
+  catch(e) { console.error(e); }
+  showLoading(false);
+}
+
+function cancelarEditProduct() {
+  editingProductId = null;
+  ['prod-edit-id','prod-nombre','prod-desc','prod-precio','prod-emoji','prod-imagen'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('prod-stock').value='disponible';
+  document.getElementById('prod-form-title').textContent='Nuevo producto';
+  document.getElementById('prod-msg').innerHTML='';
+  adminTab('tienda-admin');
+}
+
+async function guardarProducto() {
+  const nombre = document.getElementById('prod-nombre').value.trim();
+  const desc = document.getElementById('prod-desc').value.trim();
+  const precio = parseFloat(document.getElementById('prod-precio').value);
+  const emoji = document.getElementById('prod-emoji').value.trim();
+  const imagen = document.getElementById('prod-imagen').value.trim();
+  const stock = document.getElementById('prod-stock').value;
+  if (!nombre||!precio) { document.getElementById('prod-msg').innerHTML='<div class="error-msg">Nombre y precio son obligatorios.</div>'; return; }
+  showLoading(true);
+  try {
+    const data = {nombre,descripcion:desc,precio,emoji,imagen_url:imagen||null,stock};
+    if (editingProductId) await sb(`productos?id=eq.${editingProductId}`,'PATCH',data);
+    else await sb('productos','POST',data);
+    document.getElementById('prod-msg').innerHTML='<div class="success-msg">✅ Producto guardado.</div>';
+    editingProductId = null; loadProductosAdmin(); loadStats();
+    setTimeout(()=>cancelarEditProduct(),1500);
+  } catch(e) { document.getElementById('prod-msg').innerHTML='<div class="error-msg">Error al guardar.</div>'; console.error(e); }
+  showLoading(false);
+}
+
+loadProductos();
+loadRecompensa();
+</script>
+</body>
+</html>
